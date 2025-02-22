@@ -1,9 +1,11 @@
 from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QDockWidget, QTextEdit, QMainWindow, QListWidget
 from thread.MqttClientThread import MqttClientThread
 from view.NodeSketchpad import *
 
 
-class TestToys(QtWidgets.QWidget):
+class TestToys(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setup_node_sketchpad()
@@ -16,9 +18,30 @@ class TestToys(QtWidgets.QWidget):
         self.scene = NodeSketchpadScene()
         self.view = NodeSketchpadView(self.scene, self)
 
-        self.layout = QtWidgets.QBoxLayout(QtWidgets.QBoxLayout.LeftToRight, self)
-        self.layout.addWidget(self.view)
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.setCentralWidget(self.view)
+
+        dock1 = QDockWidget("Browser", self)
+        dock1_widget = QListWidget()
+        dock1.setWidget(dock1_widget)
+        self.addDockWidget(Qt.LeftDockWidgetArea, dock1)
+
+
+        dock2 = QDockWidget("Properties", self)
+        dock2_widget = QListWidget()
+        dock2.setWidget(dock2_widget)
+        self.addDockWidget(Qt.RightDockWidgetArea, dock2)
+
+        dock3 = QDockWidget("Logger", self)
+        dock3_widget = QListWidget()
+        dock3.setWidget(dock3_widget)
+        self.addDockWidget(Qt.BottomDockWidgetArea, dock3)
+
+        self.splitDockWidget(dock2, dock3, Qt.Vertical)
+
+        dock4 = QDockWidget("Nodes", self)
+        dock4_widget = QListWidget()
+        dock4.setWidget(dock4_widget)
+        self.addDockWidget(Qt.BottomDockWidgetArea, dock4)
 
         # self.button_a = QtWidgets.QPushButton("A")
         # self.button_b = QtWidgets.QPushButton("B")
