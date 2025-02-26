@@ -13,6 +13,7 @@ class TestToys(QMainWindow):
         self.setup_node_sketchpad()
 
     def closeEvent(self, event):
+        # Save QDockWidget state
         settings = QSettings("TestToys", "TestToys")
         settings.setValue('windowState', self.saveState())
 
@@ -20,7 +21,6 @@ class TestToys(QMainWindow):
         self.setWindowTitle("TestToys")
         self.setGeometry(100, 100, 1000, 600)
         self.setWindowIcon(QtGui.QIcon("public/icon.png"))
-
 
         self.scene = NodeSketchpadScene()
         self.view = NodeSketchpadView(self.scene, self)
@@ -49,44 +49,26 @@ class TestToys(QMainWindow):
         dock3.setMinimumHeight(150)
         self.addDockWidget(Qt.BottomDockWidgetArea, dock3)
 
-        dock4 = QDockWidget("Result", self)
+        # Temporarily hide this widget
+        # dock4 = QDockWidget("Result", self)
         web_view = QWebEngineView()
-        web_view.setHtml('<a href="https://data.typeracer.com/pit/profile?user=hk_l&ref=badge" target="_top"><img src="https://data.typeracer.com/misc/badge?user=hk_l" border="0" alt="TypeRacer.com scorecard for user hk_l"/></a>')
-        dock4.setWidget(web_view)
-        dock4.setEnabled(False)
-        self.addDockWidget(Qt.RightDockWidgetArea, dock4)
-
-        # self.button_a = QtWidgets.QPushButton("A")
-        # self.button_b = QtWidgets.QPushButton("B")
-        # self.button_a.clicked.connect(self.click_a)
-        # self.layout.addWidget(self.button_a)
-        # self.layout.addWidget(self.button_b)
-        # self.client_a_thread = MqttClientThread(self, "button_a")
-        # self.client_b_thread = MqttClientThread(self, "button_b")
-        # self.client_a_thread.client_started.connect(self.client_started)
-        # self.client_a_thread.client_stopped.connect(self.client_stopped)
-        # self.client_b_thread.client_started.connect(self.client_started)
-        # self.client_b_thread.client_stopped.connect(self.client_stopped)
-        # self.client_a_thread.start()
-        # self.client_b_thread.start()
-        self.show()
-
-    def client_started(self, message):
-        print(f"Client Status: {message}")
-
-    def client_stopped(self):
-        print("Client Stauts: Stopped")
-
-    def click_a(self):
-        self.client_a_thread.publish("button/button_b", "{'test':'hello'}")
+        web_view.setHtml(
+            '<a href="https://data.typeracer.com/pit/profile?user=hk_l&ref=badge" target="_top"><img src="https://data.typeracer.com/misc/badge?user=hk_l" border="0" alt="TypeRacer.com scorecard for user hk_l"/></a>')
+        # dock4.setWidget(web_view)
+        # dock4.setEnabled(False)
+        # self.addDockWidget(Qt.RightDockWidgetArea, dock4)
 
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     test_toys = TestToys()
+
+    # Load QDockWidget state
     # the companyName and appName is necessary to save DockWidget state, I don't know why.
     settings = QSettings("TestToys", "TestToys")
     state = settings.value('windowState')
     if state != None:
         test_toys.restoreState(state)
+
+    test_toys.show()
     app.exec()

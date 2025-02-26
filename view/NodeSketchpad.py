@@ -14,6 +14,7 @@ class NodeSketchpadScene(QGraphicsScene):
 
         self._width = NodeEditorConfig.scene_width
         self._height = NodeEditorConfig.scene_height
+        # Center the scene
         self.setSceneRect(
             -self._width / 2, -self._height / 2, self._width, self._height
         )
@@ -33,10 +34,8 @@ class NodeSketchpadScene(QGraphicsScene):
         super().drawBackground(painter, rect)
 
         lines, dark_lines = self.cal_grid_lines(rect)
-
         painter.setPen(self._dark_line_pen)
         painter.drawLines(dark_lines)
-
         painter.setPen(self._normal_line_pen)
         painter.drawLines(lines)
 
@@ -48,17 +47,21 @@ class NodeSketchpadScene(QGraphicsScene):
             math.floor(rect.bottom()),
         )
 
+        # Top left corner
         first_left = left - (left % self._grid_size)
         first_top = top - (top % self._grid_size)
 
+        # Calculate the start and end points of the lines
         lines = []
         dark_lines = []
+        # Draw horizontal lines
         for v in range(first_top, bottom, self._grid_size):
             line = QLine(left, v, right, v)
             if v % (self._grid_size * self._grid_chunk) == 0:
                 dark_lines.append(line)
             else:
                 lines.append(line)
+        # Draw vertical lines
         for h in range(first_left, right, self._grid_size):
             line = QLine(h, top, h, bottom)
             if h % (self._grid_size * self._grid_chunk) == 0:
@@ -76,6 +79,7 @@ class NodeSketchpadView(QGraphicsView):
         self._scene = scene
         self.setScene(self._scene)
 
+        # Make the animation more smooth
         self.setRenderHint(
             QPainter.Antialiasing
             | QPainter.TextAntialiasing
@@ -83,10 +87,13 @@ class NodeSketchpadView(QGraphicsView):
         )
         self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
 
+        # Hide the scrollbar
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
+        # Always track the mouse when adjust the ratio
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        #
         self._drag_mode = False
 
     def wheelEvent(self, event):
@@ -100,6 +107,7 @@ class NodeSketchpadView(QGraphicsView):
         self.scale(zoom_factor, zoom_factor)
     
     def mousePressEvent(self, event):
+        # When no node is selected, the entire canvas can be dragged
         if event.button() == Qt.LeftButton:
             self.leftButtonPressed(event)
         return super().mousePressEvent(event)

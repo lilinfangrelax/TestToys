@@ -1,6 +1,8 @@
 from PySide6.QtCore import QThread, Signal
 import paho.mqtt.client as mqtt
 
+# Haven't used it right now. Not needed yet.
+
 class MqttClientThread(QThread):
     client_started = Signal(str)
     client_stopped = Signal()
